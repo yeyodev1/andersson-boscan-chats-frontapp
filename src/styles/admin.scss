@@ -1,0 +1,48 @@
+// Admin / Hemeroteca dark theme tokens
+.admin-root {
+  --ad-bg: #0c0c0d;
+  --ad-bg-2: #111113;
+  --ad-panel: #161618;
+  --ad-panel-2: #1c1c1f;
+  --ad-border: rgba(255, 255, 255, 0.06);
+  --ad-border-strong: rgba(255, 255, 255, 0.12);
+  --ad-text: #e8e2d3;
+  --ad-text-dim: rgba(232, 226, 211, 0.62);
+  --ad-text-faint: rgba(232, 226, 211, 0.38);
+  --ad-accent: #d62828;
+  --ad-accent-soft: rgba(214, 40, 40, 0.16);
+  --ad-gold: #c9a84c;
+  --ad-success: #4ade80;
+  --ad-warn: #facc15;
+  --ad-danger: #ef4444;
+  --ad-radius: 10px;
+  --ad-sidebar-w: 240px;
+
+  background: var(--ad-bg);
+  color: var(--ad-text);
+  min-height: 100vh;
+  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+
+.admin-shell {
+  display: grid;
+  grid-template-columns: var(--ad-sidebar-w) 1fr;
+  min-height: 100vh;
+}
+
+.admin-main {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-content {
+  padding: 24px 32px 64px;
+  flex: 1;
+}
+
+@media (max-width: 960px) {
+  .admin-shell {
+    grid-template-columns: 1fr;
+  }
+}

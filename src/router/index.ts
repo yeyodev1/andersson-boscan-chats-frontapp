@@ -1,10 +1,51 @@
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
+import { useAdminStore } from '@/stores/admin'
 
-const BASE_TITLE = 'Andersson y Moni Boscán — Media Kit 2026'
+const BASE_TITLE = 'Andersson & Moni — Hemeroteca'
 
 const routes: Array<RouteRecordRaw> = [
   {
+    path: '/login',
+    name: 'AdminLogin',
+    component: () => import('../views/admin/LoginView.vue'),
+    meta: {
+      title: `Acceso — ${BASE_TITLE}`,
+      description: 'Acceso restringido al archivo de investigaciones.',
+    },
+  },
+  {
     path: '/',
+    component: () => import('../views/admin/AdminLayout.vue'),
+    meta: { requiresAdmin: true },
+    children: [
+      {
+        path: '',
+        name: 'Hemeroteca',
+        component: () => import('../views/admin/HemerotecaView.vue'),
+        meta: { title: `Hemeroteca — ${BASE_TITLE}` },
+      },
+      {
+        path: 'conversaciones',
+        name: 'Conversaciones',
+        component: () => import('../views/admin/ConversacionesView.vue'),
+        meta: { title: `Conversaciones — ${BASE_TITLE}` },
+      },
+      {
+        path: 'fuentes',
+        name: 'Fuentes',
+        component: () => import('../views/admin/FuentesView.vue'),
+        meta: { title: `Fuentes — ${BASE_TITLE}` },
+      },
+      {
+        path: 'etiquetas',
+        name: 'Etiquetas',
+        component: () => import('../views/admin/EtiquetasView.vue'),
+        meta: { title: `Etiquetas — ${BASE_TITLE}` },
+      },
+    ],
+  },
+  {
+    path: '/media-kit',
     name: 'MediaKit',
     component: () => import('../views/MediaKitView.vue'),
     meta: {
@@ -27,7 +68,7 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('../views/PreciosView.vue'),
     meta: {
       title: `Tarifas 2026 — Andersson y Moni Boscán | Media Kit`,
-      description: 'Tabla de tarifas y formatos de pauta de Andersson y Moni Boscán. Accede a precios y formatos disponibles para tu marca.',
+      description: 'Tabla de tarifas y formatos de pauta de Andersson y Moni Boscán.',
     },
   },
   {
@@ -59,25 +100,24 @@ const router = createRouter({
 })
 
 router.beforeEach((to, _from, next) => {
-  // Set page title
   const title = to.meta?.title as string | undefined
   if (title) document.title = title
 
-  // Set meta description
   const desc = to.meta?.description as string | undefined
   if (desc) {
     const metaDesc = document.querySelector('meta[name="description"]')
     if (metaDesc) metaDesc.setAttribute('content', desc)
   }
 
-  const hasToken = !!localStorage.getItem('access_token')
-  const requiresAuth = to.matched.some((record) => record.meta?.requiresAuth)
+  const requiresAdmin = to.matched.some((r) => r.meta?.requiresAdmin)
+  const admin = useAdminStore()
+  if (!admin.isAuthenticated) admin.hydrate()
 
-  if (requiresAuth && !hasToken) {
+  if (requiresAdmin && !admin.isAuthenticated) {
     return next({ path: '/login', replace: true })
   }
 
-  if (to.path === '/login' && hasToken) {
+  if (to.path === '/login' && admin.isAuthenticated) {
     return next({ path: '/', replace: true })
   }
 
